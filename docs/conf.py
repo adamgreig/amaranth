@@ -15,7 +15,6 @@ extensions = [
     "sphinx_rtd_theme",
     "sphinxcontrib.platformpicker",
     "sphinx.ext.napoleon",
-    "numpydoc",
 ]
 
 with open(".gitignore") as f:
@@ -31,5 +30,15 @@ html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
 
-autoapi_type = 'python'
-autoapi_dirs = ['../nmigen']
+napoleon_custom_sections = [
+    "Arguments",
+    "Platform Override",
+    "Note On Reset",
+    "Exceptions",
+    "Trellis Toolchain",
+    "Diamond Toolchain",
+    "Icestorm Toolchain",
+    "Icecube2 Toolchain",
+    "Symbiflow Toolchain",
+    "Vivado Toolchain",
+]
