@@ -14,7 +14,6 @@ extensions = [
     "sphinx.ext.todo",
     "sphinx_rtd_theme",
     "sphinxcontrib.platformpicker",
-    "autoapi.extension",
     "sphinx.ext.napoleon",
     "numpydoc",
 ]
