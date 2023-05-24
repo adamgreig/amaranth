@@ -1,105 +1,134 @@
+"""
+Utilities for computing cyclic redundancy checks (CRCs) in software and in
+hardware.
+"""
+
 from .. import *
 
 
-__all__ = ["CRC"]
+__all__ = ["Parameters", "Processor", "SoftwareProcessor"]
 
 
-class _SoftwareCRC:
+class Parameters:
     """
-    Compute CRCs in software, used to create constants required by the ``CRC``
-    class. Refer to its documentation for the meaning of each parameter.
+    Parameters for a CRC computation.
+
+    The parameter set is based on the Williams model from
+    "A Painless Guide to CRC Error Detection Algorithms":
+    http://www.ross.net/crc/download/crc_v3.txt
+
+    For a reference of standard CRC parameter sets, refer to:
+
+    * `reveng`_'s catalogue, which uses an identical parameterisation,
+    * `crcmod`_'s list of predefined functions, but remove the leading '1'
+      from the polynominal and where "Reversed" is True, set both
+      ``reflect_input`` and ``reflect_output`` to True,
+    * `CRC Zoo`_, which contains only polynomials; use the "explicit +1"
+      form of polynomial but remove the leading '1'.
+
+    .. _reveng: https://reveng.sourceforge.io/crc-catalogue/all.htm
+    .. _crcmod: http://crcmod.sourceforge.net/crcmod.predefined.html
+    .. _CRC Zoo: https://users.ece.cmu.edu/~koopman/crc/
+
+    Parameters
+    ----------
+    crc_width : int
+        Bit width of CRC word. Also known as "width" in the Williams model.
+    data_width : int
+        Bit width of data words.
+    polynomial : int
+        CRC polynomial to use, ``crc_width`` bits long, without the implicit
+        ``x**crc_width`` term. Polynomial is always specified with the highest
+        order terms in the most significant bit positions; use
+        ``reflect_input`` and ``reflect_output`` to perform a least
+        significant bit first computation.
+    initial_crc : int
+        Initial value of CRC register at reset. Most significant bit always
+        corresponds to the highest order term in the CRC register.
+    reflect_input : bool
+        If True, the input data words are bit-reflected, so that they are
+        processed least significant bit first.
+    reflect_output : bool
+        If True, the output CRC is bit-reflected, so the least-significant bit
+        of the output is the highest-order bit of the CRC register.
+        Note that this reflection is performed over the entire CRC register;
+        for transmission you may want to treat the output as a little-endian
+        multi-word value, so for example the reflected 16-bit output 0x4E4C
+        would be transmitted as the two octets 0x4C 0x4E, each transmitted
+        least significant bit first.
+    xor_output : int
+        The output CRC will be the CRC register XOR'd with this value, applied
+        after any output bit-reflection.
     """
-    def __init__(self, n, m, poly, init, ref_in, ref_out, xor_out):
-        self.n = int(n)
-        self.m = int(m)
-        self.poly = int(poly)
-        self.init = int(init)
-        self.ref_in = bool(ref_in)
-        self.ref_out = bool(ref_out)
-        self.xor_out = int(xor_out)
+    def __init__(self, crc_width, data_width, polynomial, initial_crc,
+                 reflect_input, reflect_output, xor_output):
+        self.crc_width = int(crc_width)
+        self.data_width = int(data_width)
+        self.polynomial = int(polynomial)
+        self.initial_crc = int(initial_crc)
+        self.reflect_input = bool(reflect_input)
+        self.reflect_output = bool(reflect_output)
+        self.xor_output = int(xor_output)
 
-        assert self.n > 0
-        assert self.m > 0
-        assert self.poly < 2 ** n
-        assert self.init < 2 ** n
-        assert self.xor_out < 2 ** n
+        assert self.crc_width > 0
+        assert self.data_width > 0
+        assert self.polynomial < 2 ** self.crc_width
+        assert self.initial_crc < 2 ** self.crc_width
+        assert self.xor_output < 2 ** self.crc_width
 
-
-    def _update(self, crc, word):
+    def residue(self):
         """
-        Run one round of CRC processing in software, given the current CRC
-        value ``crc`` and the new data word ``word``.
-
-        This method is not affected by ``init``, ``ref_in``, ``ref_out``,
-        or ``xor_out`; those parameters are applied elsewhere.
-
-        Returns the new value for ``crc``.
+        Compute the residue value for this CRC, which is the value left in the
+        CRC register after processing any valid codeword.
         """
-        # Implementation notes:
-        # We always compute most-significant bit first, which means the
-        # polynomial and initial value may be used as-is, and the ref_in
-        # and ref_out values have their usual sense.
-        # However, when computing word-at-a-time and MSbit-first, we must
-        # align the input word so its MSbit lines up with the MSbit of the
-        # previous CRC value. When the CRC length n is smaller than the word
-        # length m, this would normally truncate data bits.
-        # Instead, we shift the previous CRC left by m and the word left by
-        # n, lining up their MSbits no matter the relation between n and m.
-        # The new CRC is then shifted right by m before output.
-        assert 0 <= word < (2 ** self.m)
-        crc = (crc << self.m) ^ (word << self.n)
-        for _ in range(self.m):
-            if (crc >> self.m) & (1 << (self.n - 1)):
-                crc = (crc << 1) ^ (self.poly << self.m)
-            else:
-                crc <<= 1
-        return (crc >> self.m) & ((2 ** self.n) - 1)
-
-    def _compute(self, data):
-        """
-        Compute in software the CRC of the input data words in ``data``.
-
-        Returns the final CRC value.
-        """
-        crc = self.init
-        for word in data:
-            if self.ref_in:
-                word = self._reflect(word, self.m)
-            crc = self._update(crc, word)
-        if self.ref_out:
-            crc = self._reflect(crc, self.n)
-        crc ^= self.xor_out
-        return crc
-
-    def _residue(self):
-        """
-        Compute in software the residue for the configured CRC, which is the
-        value left in the CRC register after processing a valid codeword.
-        """
-        # Residue is computed by initialising to (reflected) xor_out, feeding
-        # n 0 bits, then taking the (reflected) output, without any XOR.
-        if self.ref_out:
-            init = self._reflect(self.xor_out, self.n)
+        # Residue is computed by initialising to (possibly reflected)
+        # xor_output, feeding crc_width worth of 0 bits, then taking
+        # the (possibly reflected) output without any XOR.
+        if self.reflect_output:
+            init = SoftwareProcessor._reflect(self.xor_output, self.crc_width)
         else:
-            init = self.xor_out
-        crc = _SoftwareCRC(self.n, self.n, self.poly, init, False, self.ref_out, 0)
-        return crc._compute([0])
+            init = self.xor_output
+        crc = self.create_software()
+        crc.initial_crc = init
+        crc.data_width = self.crc_width
+        crc.reflect_input = False
+        crc.xor_output = 0
+        return crc.compute([0])
 
-    @staticmethod
-    def _reflect(word, n):
+    def check(self):
         """
-        Bitwise-reflects an n-bit word `word`.
+        Compute the CRC of the ASCII string "123456789", commonly used as
+        a verification value for CRC parameters.
         """
-        return int(f"{word:0{n}b}"[::-1], 2)
+        return self.compute(b"123456789")
 
-    def _generate_matrices(self):
+    def create(self):
+        """
+        Returns a ``Processor`` configured with these parameters.
+        """
+        return Processor(self)
+
+    def create_software(self):
+        """
+        Returns a ``SoftwareProcessor`` configured with these parameters.
+        """
+        return SoftwareProcessor(self)
+
+    def compute(self, data):
+        """
+        Computes and returns the CRC of all data words in ``data``.
+        """
+        return SoftwareProcessor(self).compute(data)
+
+    def _matrices(self):
         """
         Computes the F and G matrices for parallel CRC computation, treating
         the CRC as a linear time-invariant system described by the state
         relation x(t+1) = F.x(i) + G.u(i), where x(i) and u(i) are column
         vectors of the bits of the CRC register and input word, F is the n-by-n
         matrix relating the old state to the new state, and G is the n-by-m
-        matrix relating the new data to the new state.
+        matrix relating the new data to the new state, where n is the CRC
+        width and m is the data word width.
 
         The matrices are ordered least-significant-bit first; in other words
         the first entry, with index (0, 0), corresponds to the effect of the
@@ -115,155 +144,201 @@ class _SoftwareCRC:
         state is included in the XOR, and if G[j][i] is set then bit j of the
         new data is included.
 
-        These matrices are not affected by ``init``, ``ref_in``, ``ref_out``,
-        or ``xor_out``.
+        These matrices are not affected by ``initial_crc``, ``reflect_input``,
+        ``reflect__output``, or ``xor_output``.
         """
         f = []
         g = []
-        for i in range(self.n):
-            w = self._update(2 ** i, 0)
-            f.append([int(x) for x in reversed(f"{w:0{self.n}b}")])
-        for i in range(self.m):
-            w = self._update(0, 2 ** i)
-            g.append([int(x) for x in reversed(f"{w:0{self.n}b}")])
+        crc = self.create_software()
+        crc.reflect_input = crc.reflect_output = False
+        crc.xor_output = 0
+        for i in range(self.crc_width):
+            crc.initial_crc = 2 ** i
+            w = crc.compute([0])
+            f.append([int(x) for x in reversed(f"{w:0{self.crc_width}b}")])
+        for i in range(self.data_width):
+            crc.initial_crc = 0
+            w = crc.compute([2 ** i])
+            g.append([int(x) for x in reversed(f"{w:0{self.crc_width}b}")])
         return f, g
 
 
-class CRC(_SoftwareCRC, Elaboratable):
-    """Cyclic redundancy check (CRC) generator.
+class SoftwareProcessor:
+    """
+    Compute CRCs in software.
+    """
+    def __init__(self, parameters):
+        assert isinstance(parameters, Parameters)
+        self.crc_width = parameters.crc_width
+        self.data_width = parameters.data_width
+        self.polynomial = parameters.polynomial
+        self.initial_crc = parameters.initial_crc
+        self.reflect_input = parameters.reflect_input
+        self.reflect_output = parameters.reflect_output
+        self.xor_output = parameters.xor_output
+
+    def compute(self, data):
+        """
+        Compute in software the CRC of the input data words in ``data``,
+        using all CRC parameters.
+
+        Returns the final CRC value.
+        """
+        # Precompute some constants we use every iteration.
+        word_max = (1 << self.data_width) - 1
+        top_bit = 1 << (self.crc_width + self.data_width - 1)
+        crc_mask = (1 << (self.crc_width + self.data_width)) - 1
+        poly_shifted = self.polynomial << self.data_width
+
+        # Implementation notes:
+        # We always compute most-significant bit first, which means the
+        # polynomial and initial value may be used as-is, and the reflect_in
+        # and reflect_out values have their usual sense.
+        # However, when computing word-at-a-time and MSbit-first, we must align
+        # the input word so its MSbit lines up with the MSbit of the previous
+        # CRC value. When the CRC width is smaller than the word width, this
+        # would normally truncate data bits.
+        # Instead, we shift the initial CRC left by the data width, and the
+        # data word left by the crc width, lining up their MSbits no matter
+        # the relation between the two widths.
+        # The new CRC is then shifted right by the data width before output.
+
+        crc = self.initial_crc << self.data_width
+        for word in data:
+            assert 0 <= word <= word_max
+
+            if self.reflect_input:
+                word = self._reflect(word, self.data_width)
+
+            crc ^= word << self.crc_width
+            for _ in range(self.data_width):
+                if crc & top_bit:
+                    crc = (crc << 1) ^ poly_shifted
+                else:
+                    crc <<= 1
+            crc &= crc_mask
+
+        crc >>= self.data_width
+        if self.reflect_output:
+            crc = self._reflect(crc, self.crc_width)
+
+        crc ^= self.xor_output
+        return crc
+
+    @staticmethod
+    def _reflect(word, n):
+        """
+        Bitwise-reflects an n-bit word ``word``.
+        """
+        return int(f"{word:0{n}b}"[::-1], 2)
+
+
+class Processor(Elaboratable):
+    """
+    Cyclic redundancy check (CRC) processor module.
 
     This module generates CRCs from an input data stream, which can be used
-    to validate an existing CRC or generate a new CRC. It can handle most
-    forms of CRCs, with selectable polynomial, input data width, initial
-    value, output XOR, and bit-reflection on input and output.
-
-    It is parameterised using the well-known Williams model from
-    "A Painless Guide to CRC Error Detection Algorithms":
-    http://www.ross.net/crc/download/crc_v3.txt
-
-    For the parameters to use for standard CRCs, refer to:
-
-    * `reveng`_'s catalogue, which uses an identical parameterisation,
-    * `crcmod`_'s list of predefined functions, but remove the leading '1'
-      from the polynominal and where "Reversed" is True, set both ``ref_in``
-      and ``ref_out`` to True,
-    * `CRC Zoo`_, which contains only polynomials; use the "explicit +1"
-      form of polynomial but remove the leading '1'.
-
-    .. _reveng: https://reveng.sourceforge.io/crc-catalogue/all.htm
-    .. _crcmod: http://crcmod.sourceforge.net/crcmod.predefined.html
-    .. _CRC Zoo: https://users.ece.cmu.edu/~koopman/crc/
+    to validate an existing CRC or generate a new CRC. It is configured by
+    the ``Parameters`` class, which can handle most forms of CRCs. Refer to
+    that class's documentation for a description of the parameters.
 
     The CRC value is updated on any clock cycle where ``valid`` is asserted,
     with the updated value available on the ``crc`` output on the subsequent
-    clock cycle. The latency is therefore one cycle, and the throughput is
-    one data word per clock cycle.
+    clock cycle. The latency is therefore one clock cycle, and the throughput
+    is one data word per clock cycle.
 
-    With ``m=1``, a classic bit-serial CRC is implemented for the given
-    polynomial in a Galois-type shift register. For larger values of m,
-    a similar architecture computes every new bit of the CRC in parallel.
+    The CRC is reset to its initial value whenever ``first`` is asserted.
+    ``first`` and ``valid`` may be asserted on the same clock cycle, in which
+    case a new CRC computation is started with the current value of ``data``.
 
-    The ``match`` output may be used to validate data with a trailing CRC
-    (also known as a codeword). If the most recently processed word(s) form
-    the valid CRC of all the previous data since reset, the CRC register
-    will always take on a fixed value known as the residue. The ``match``
-    output indicates whether the CRC register currently contains this residue.
+    With ``data_width=1``, a classic bit-serial CRC is implemented for the
+    given polynomial in a Galois-type shift register. For larger values of
+    ``data_width``, a similar architecture computes every new bit of the
+    CRC in parallel.
+
+    The ``match_detected`` output may be used to validate data with a trailing
+    CRC (also known as a codeword). If the most recently processed word(s) form
+    the valid CRC of all the previous data since ``first`` was asserted, the
+    CRC register will always take on a fixed value known as the residue.  The
+    ``match_detected`` output indicates whether the CRC register currently
+    contains this residue.
 
     Parameters
     ----------
-    n : int
-        Bit width of CRC word. Also known as "width" in the Williams model.
-    m : int
-        Bit width of data words.
-    poly : int
-        CRC polynomial to use, n bits long, without the implicit x**n term.
-        Polynomial is always specified with the highest order terms in the
-        most significant bit positions; use ``ref_in`` and ``ref_out`` to
-        perform a least significant bit first computation.
-    init : int
-        Initial value of CRC register at reset. Most significant bit always
-        corresponds to the highest order term in the CRC register.
-    ref_in : bool
-        If True, the input data words are bit-reflected, so that they are
-        processed least significant bit first.
-    ref_out : bool
-        If True, the output CRC is bit-reflected, so the least-significant bit
-        of the output is the highest-order bit of the CRC register.
-        Note that this reflection is performed over the entire CRC register;
-        for transmission you may want to treat the output as a little-endian
-        multi-word value, so for example the reflected 16-bit output 0x4E4C
-        would be transmitted as the two octets 0x4C 0x4E, each transmitted
-        least significant bit first.
-    xor_out : int
-        The output CRC will be the CRC register XOR'd with this value, applied
-        after any output bit-reflection.
+    parameters : Parameters
+        CRC parameters.
 
     Attributes
     ----------
-    rst : Signal(), in
-        Assert to re-initialise the CRC to the initial value.
-    data : Signal(m), in
+    first : Signal(), in
+        Assert to indicate the start of a CRC computation, re-initialising
+        the CRC register to the initial value. May be asserted simultaneously
+        with ``valid``.
+    data : Signal(data_width), in
         Data word to add to CRC when ``valid`` is asserted.
     valid : Signal(), in
         Assert when ``data`` is valid to add the data word to the CRC.
-        Ignored when ``rst`` is asserted.
-    crc : Signal(n), out
+    crc : Signal(crc_width), out
         Registered CRC output value, updated one clock cycle after ``valid``
         becomes asserted.
-    match : Signal(), out
+    match_detected : Signal(), out
         Asserted if the current CRC value indicates a valid codeword has been
         received.
     """
-    def __init__(self, n, m, poly, init=0, ref_in=False, ref_out=False, xor_out=0):
-        # Initialise SoftwareCRC arguments.
-        super().__init__(n, m, poly, init, ref_in, ref_out, xor_out)
+    def __init__(self, parameters):
+        assert isinstance(parameters, Parameters)
+        self.crc_width = parameters.crc_width
+        self.data_width = parameters.data_width
+        self.polynomial = parameters.polynomial
+        self.initial_crc = Const(parameters.initial_crc, self.crc_width)
+        self.reflect_input = parameters.reflect_input
+        self.reflect_output = parameters.reflect_output
+        self.xor_output = parameters.xor_output
+        self._matrix_f, self._matrix_g = parameters._matrices()
+        self._residue = parameters.residue()
 
-        self.rst = Signal()
-        self.data = Signal(self.m)
+        self.first = Signal()
+        self.data = Signal(self.data_width)
         self.valid = Signal()
-        self.crc = Signal(self.n)
-        self.match = Signal()
+        self.crc = Signal(self.crc_width)
+        self.match_detected = Signal()
 
     def elaborate(self, platform):
         m = Module()
 
-        crc_reg = Signal(self.n, reset=self.init)
-        data_in = Signal(self.m)
+        crc_reg = Signal(self.crc_width, reset=self.initial_crc.value)
+        data_in = Signal(self.data_width)
 
         # Optionally bit-reflect input words.
-        if self.ref_in:
+        if self.reflect_input:
             m.d.comb += data_in.eq(self.data[::-1])
         else:
             m.d.comb += data_in.eq(self.data)
 
-        # Optionally bit-reflect and then XOR the output from the state.
-        if self.ref_out:
-            m.d.comb += self.crc.eq(crc_reg[::-1] ^ self.xor_out)
+        # Optionally bit-reflect and then XOR the output.
+        if self.reflect_output:
+            m.d.comb += self.crc.eq(crc_reg[::-1] ^ self.xor_output)
         else:
-            m.d.comb += self.crc.eq(crc_reg ^ self.xor_out)
-
-        # Compute CRC matrices and expected residue using the software model.
-        f, g = self._generate_matrices()
-        residue = self._residue()
+            m.d.comb += self.crc.eq(crc_reg ^ self.xor_output)
 
         # Compute next CRC state.
-        with m.If(self.rst):
-            m.d.sync += crc_reg.eq(self.init)
-        with m.Elif(self.valid):
-            for i in range(self.n):
+        with m.If(self.valid):
+            for i in range(self.crc_width):
                 bit = 0
-                for j in range(self.n):
-                    if f[j][i]:
-                        bit ^= crc_reg[j]
-                for j in range(self.m):
-                    if g[j][i]:
+                for j in range(self.crc_width):
+                    if self._matrix_f[j][i]:
+                        bit ^= Mux(self.first, self.initial_crc[j], crc_reg[j])
+                for j in range(self.data_width):
+                    if self._matrix_g[j][i]:
                         bit ^= data_in[j]
                 m.d.sync += crc_reg[i].eq(bit)
+        with m.Elif(self.first):
+            m.d.sync += crc_reg.eq(self.initial_crc)
 
         # Check for residue match, indicating a valid codeword.
-        if self.ref_out:
-            m.d.comb += self.match.eq(crc_reg[::-1] == residue)
+        if self.reflect_output:
+            m.d.comb += self.match_detected.eq(crc_reg[::-1] == self._residue)
         else:
-            m.d.comb += self.match.eq(crc_reg == residue)
+            m.d.comb += self.match_detected.eq(crc_reg == self._residue)
 
         return m

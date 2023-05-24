@@ -1,7 +1,7 @@
 import unittest
 
 from amaranth.sim import *
-from amaranth.lib.crc import CRC, _SoftwareCRC
+from amaranth.lib.crc import Parameters
 
 
 # Catalogue of standard CRCs used to test the CRC implementation.
@@ -52,12 +52,13 @@ class CRCTestCase(unittest.TestCase):
         in the catalogue with byte-sized inputs.
         """
         for n, poly, init, ref_in, ref_out, xor_out, check, _ in CRCS:
-            crc = CRC(n, 8, poly, init, ref_in, ref_out, xor_out)
+            p = Parameters(n, 8, poly, init, ref_in, ref_out, xor_out)
+            crc = p.create()
 
             def process():
-                yield crc.rst.eq(1)
+                yield crc.first.eq(1)
                 yield
-                yield crc.rst.eq(0)
+                yield crc.first.eq(0)
                 for word in b"123456789":
                     yield crc.data.eq(word)
                     yield crc.valid.eq(1)
@@ -87,10 +88,12 @@ class CRCTestCase(unittest.TestCase):
 
         for n, poly, init, ref_in, ref_out, xor_out, _, _ in CRCS:
             for m in (1, 2, 4, 16, 32, 64):
-                crc = CRC(n, m, poly, init, ref_in, ref_out, xor_out)
+                p = Parameters(n, m, poly, init, ref_in, ref_out, xor_out)
+                crc = p.create()
                 # Use a SoftwareCRC with byte inputs to compute new checks.
-                swcrc = _SoftwareCRC(n, 8, poly, init, ref_in, ref_out, xor_out)
-                check = swcrc._compute(data)
+                swcrc = p.create_software()
+                swcrc.data_width = 8
+                check = swcrc.compute(data)
                 # Chunk input bits into m-bit words, reflecting if needed.
                 if ref_in:
                     d = [bits_r[i : i+m][::-1] for i in range(0, len(bits), m)]
@@ -99,9 +102,9 @@ class CRCTestCase(unittest.TestCase):
                 words = [int(x, 2) for x in d]
 
                 def process():
-                    yield crc.rst.eq(1)
+                    yield crc.first.eq(1)
                     yield
-                    yield crc.rst.eq(0)
+                    yield crc.first.eq(0)
                     for word in words:
                         yield crc.data.eq(word)
                         yield crc.valid.eq(1)
@@ -116,10 +119,11 @@ class CRCTestCase(unittest.TestCase):
                 sim.run()
 
     def test_crc_match(self):
-        """Verify match output detects valid codewords."""
+        """Verify match_detected output detects valid codewords."""
         for n, poly, init, ref_in, ref_out, xor_out, check, _ in CRCS:
             m = 8 if n % 8 == 0 else 1
-            crc = CRC(n, m, poly, init, ref_in, ref_out, xor_out)
+            p = Parameters(n, m, poly, init, ref_in, ref_out, xor_out)
+            crc = p.create()
 
             if m == 8:
                 # For CRCs which are multiples of one byte wide, we can easily
@@ -147,16 +151,16 @@ class CRCTestCase(unittest.TestCase):
                 words = words[:72 + n]
 
             def process():
-                yield crc.rst.eq(1)
+                yield crc.first.eq(1)
                 yield
-                yield crc.rst.eq(0)
+                yield crc.first.eq(0)
                 for word in words:
                     yield crc.data.eq(word)
                     yield crc.valid.eq(1)
                     yield
                 yield crc.valid.eq(0)
                 yield
-                self.assertTrue((yield crc.match))
+                self.assertTrue((yield crc.match_detected))
 
             sim = Simulator(crc)
             sim.add_sync_process(process)
