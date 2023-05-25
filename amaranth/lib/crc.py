@@ -221,7 +221,13 @@ class Predefined:
     Predefined CRC parameters.
 
     Each instance of this class is a standard or well-known CRC algorithm,
-    specified except for the data word width.
+    specified except for the data word width. Refer to the ``Parameters``
+    class for the meaning of the parameters, and additionally:
+
+    * ``check`` is the CRC of the ASCII byte string "123456789", commonly
+      used to validate a CRC algorithm.
+    * ``residue`` is the expected CRC value after processing a valid
+      codeword (a data word followed immediately by its CRC).
 
     To create a ``Parameters`` instance, call the ``Predefined`` object
     with the required data word width, which defaults to 8 bits.
@@ -254,8 +260,17 @@ class Predefined:
 
 
 class Catalog:
-    # Catalogue entries are from https://reveng.sourceforge.io/crc-catalogue/all.htm
-    # Accessed 2023-05-25.
+    """
+    Catalog of predefined CRC algorithms.
+
+    All entries are from `reveng`_, accessed on 2023-05-25.
+
+    To use an entry, call it with an optional ``data_width`` which defaults
+    to 8. For example::
+
+        crc8 = m.submodules.crc8 = crc.Catalog.CRC8_AUTOSAR().create()
+
+    """
     CRC3_GSM = Predefined(3, 0x3, 0x0, False, False, 0x7, 0x4, 0x2)
     CRC3_ROHC = Predefined(3, 0x3, 0x7, True, True, 0x0, 0x6, 0x0)
     CRC4_G_704 = CRC4_ITU = Predefined(4, 0x3, 0x0, True, True, 0x0, 0x7, 0x0)
