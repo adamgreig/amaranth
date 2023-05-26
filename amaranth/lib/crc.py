@@ -25,8 +25,9 @@ class Parameters:
 
     * `reveng`_'s catalogue, which uses an identical parameterisation,
     * `crcmod`_'s list of predefined functions, but remove the leading '1'
-      from the polynominal and where "Reversed" is True, set both
-      ``reflect_input`` and ``reflect_output`` to True,
+      from the polynominal, XOR the "Init-value" with "XOR-out" to obtain
+      ``initial_crc``, and where "Reversed" is True, set both ``reflect_input``
+      and ``reflect_output`` to True,
     * `CRC Zoo`_, which contains only polynomials; use the "explicit +1"
       form of polynomial but remove the leading '1'.
 
@@ -498,12 +499,13 @@ class Processor(Elaboratable):
             m.d.comb += self.crc.eq(crc_reg ^ self.xor_output)
 
         # Compute next CRC state.
+        source = Mux(self.first, self.initial_crc, crc_reg)
         with m.If(self.valid):
             for i in range(self.crc_width):
                 bit = 0
                 for j in range(self.crc_width):
                     if self._matrix_f[j][i]:
-                        bit ^= Mux(self.first, self.initial_crc[j], crc_reg[j])
+                        bit ^= source[j]
                 for j in range(self.data_width):
                     if self._matrix_g[j][i]:
                         bit ^= data_in[j]
