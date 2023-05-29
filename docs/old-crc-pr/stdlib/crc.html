@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cyclic redundancy checks &mdash; Amaranth HDL toolchain 0.4.dev117 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/platformpicker.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/platformpicker.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="First-in first-out queues" href="fifo.html" />
+    <link rel="prev" title="Clock domain crossing" href="cdc.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../cover.html" class="icon icon-home">
+            Amaranth HDL toolchain
+          </a>
+              <div class="version">
+                0.4.dev117+gd8dc8d4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Language &amp; toolchain</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../intro.html">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../start.html">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html">Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../lang.html">Language guide</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../stdlib.html">Standard library</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="enum.html">Enumerations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="data.html">Data structures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="coding.html">Code conversion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cdc.html">Clock domain crossing</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Cyclic redundancy checks</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#amaranth.lib.crc.Parameters"><code class="docutils literal notranslate"><span class="pre">Parameters</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#amaranth.lib.crc.Processor"><code class="docutils literal notranslate"><span class="pre">Processor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#amaranth.lib.crc.Predefined"><code class="docutils literal notranslate"><span class="pre">Predefined</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#amaranth.lib.crc.Catalog"><code class="docutils literal notranslate"><span class="pre">Catalog</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="fifo.html">First-in first-out queues</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../platform.html">Platform integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changes.html">Changelog</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://amaranth-lang.org/docs/amaranth-boards/latest/">Board definitions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../cover.html">Amaranth HDL toolchain</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../cover.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Language &amp; toolchain</a></li>
+          <li class="breadcrumb-item"><a href="../stdlib.html">Standard library</a></li>
+      <li class="breadcrumb-item active">Cyclic redundancy checks</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/stdlib/crc.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-amaranth.lib.crc">
+<span id="cyclic-redundancy-checks"></span><h1>Cyclic redundancy checks<a class="headerlink" href="#module-amaranth.lib.crc" title="Permalink to this heading"></a></h1>
+<p>The <a class="reference internal" href="#module-amaranth.lib.crc" title="amaranth.lib.crc"><code class="xref py py-mod docutils literal notranslate"><span class="pre">amaranth.lib.crc</span></code></a> module provides a cyclic redundancy check (CRC)
+implementation in software and in hardware.</p>
+<p>Many commonly used CRC algorithms are available with their parameters
+predefined in the <a class="reference internal" href="#amaranth.lib.crc.Catalog" title="amaranth.lib.crc.Catalog"><code class="xref py py-class docutils literal notranslate"><span class="pre">Catalog</span></code></a> class, while most other CRC algorithms can
+be used by directly specifying their parameters in the <a class="reference internal" href="#amaranth.lib.crc.Parameters" title="amaranth.lib.crc.Parameters"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parameters</span></code></a> class.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Parameters">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">amaranth.lib.crc.</span></span><span class="sig-name descname"><span class="pre">Parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">crc_width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polynomial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_crc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reflect_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reflect_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xor_output</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#amaranth.lib.crc.Parameters" title="Permalink to this definition"></a></dt>
+<dd><p>Parameters for a CRC computation.</p>
+<p>The parameter set is based on the Williams model from
+“A Painless Guide to CRC Error Detection Algorithms”:
+<a class="reference external" href="http://www.ross.net/crc/download/crc_v3.txt">http://www.ross.net/crc/download/crc_v3.txt</a></p>
+<p>For a reference of standard CRC parameter sets, refer to:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://reveng.sourceforge.io/crc-catalogue/all.htm">reveng</a>’s catalogue, which uses an identical parameterisation,</p></li>
+<li><p><a class="reference external" href="http://crcmod.sourceforge.net/crcmod.predefined.html">crcmod</a>’s list of predefined functions, but remove the leading ‘1’
+from the polynominal, XOR the “Init-value” with “XOR-out” to obtain
+<code class="docutils literal notranslate"><span class="pre">initial_crc</span></code>, and where “Reversed” is True, set both <code class="docutils literal notranslate"><span class="pre">reflect_input</span></code>
+and <code class="docutils literal notranslate"><span class="pre">reflect_output</span></code> to True,</p></li>
+<li><p><a class="reference external" href="https://users.ece.cmu.edu/~koopman/crc/">CRC Zoo</a>, which contains only polynomials; use the “explicit +1”
+form of polynomial but remove the leading ‘1’.</p></li>
+</ul>
+<p>All entries from the reveng catalogue are available from the <code class="docutils literal notranslate"><span class="pre">Catalog</span></code>
+class in this module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>crc_width</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – Bit width of CRC word. Also known as “width” in the Williams model.</p></li>
+<li><p><strong>data_width</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – Bit width of data words.</p></li>
+<li><p><strong>polynomial</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – CRC polynomial to use, <code class="docutils literal notranslate"><span class="pre">crc_width</span></code> bits long, without the implicit
+<code class="docutils literal notranslate"><span class="pre">x**crc_width</span></code> term. Polynomial is always specified with the highest
+order terms in the most significant bit positions; use
+<code class="docutils literal notranslate"><span class="pre">reflect_input</span></code> and <code class="docutils literal notranslate"><span class="pre">reflect_output</span></code> to perform a least
+significant bit first computation.</p></li>
+<li><p><strong>initial_crc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – Initial value of CRC register at reset. Most significant bit always
+corresponds to the highest order term in the CRC register.</p></li>
+<li><p><strong>reflect_input</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – If True, the input data words are bit-reflected, so that they are
+processed least significant bit first.</p></li>
+<li><p><strong>reflect_output</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – If True, the output CRC is bit-reflected, so the least-significant bit
+of the output is the highest-order bit of the CRC register.
+Note that this reflection is performed over the entire CRC register;
+for transmission you may want to treat the output as a little-endian
+multi-word value, so for example the reflected 16-bit output 0x4E4C
+would be transmitted as the two octets 0x4C 0x4E, each transmitted
+least significant bit first.</p></li>
+<li><p><strong>xor_output</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – The output CRC will be the CRC register XOR’d with this value, applied
+after any output bit-reflection.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Parameters.residue">
+<span class="sig-name descname"><span class="pre">residue</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#amaranth.lib.crc.Parameters.residue" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the residue value for this CRC, which is the value left in the
+CRC register after processing any valid codeword.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Parameters.check">
+<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#amaranth.lib.crc.Parameters.check" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the CRC of the ASCII string “123456789”, commonly used as
+a verification value for CRC parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Parameters.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#amaranth.lib.crc.Parameters.create" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a <code class="docutils literal notranslate"><span class="pre">Processor</span></code> configured with these parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Parameters.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#amaranth.lib.crc.Parameters.compute" title="Permalink to this definition"></a></dt>
+<dd><p>Computes and returns the CRC of all data words in <code class="docutils literal notranslate"><span class="pre">data</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Processor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">amaranth.lib.crc.</span></span><span class="sig-name descname"><span class="pre">Processor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_loc_at</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#amaranth.lib.crc.Processor" title="Permalink to this definition"></a></dt>
+<dd><p>Cyclic redundancy check (CRC) processor module.</p>
+<p>This module generates CRCs from an input data stream, which can be used
+to validate an existing CRC or generate a new CRC. It is configured by
+the <code class="docutils literal notranslate"><span class="pre">Parameters</span></code> class, which can handle most forms of CRCs. Refer to
+that class’s documentation for a description of the parameters.</p>
+<p>The CRC value is updated on any clock cycle where <code class="docutils literal notranslate"><span class="pre">valid</span></code> is asserted,
+with the updated value available on the <code class="docutils literal notranslate"><span class="pre">crc</span></code> output on the subsequent
+clock cycle. The latency is therefore one clock cycle, and the throughput
+is one data word per clock cycle.</p>
+<p>The CRC is reset to its initial value whenever <code class="docutils literal notranslate"><span class="pre">first</span></code> is asserted.
+<code class="docutils literal notranslate"><span class="pre">first</span></code> and <code class="docutils literal notranslate"><span class="pre">valid</span></code> may be asserted on the same clock cycle, in which
+case a new CRC computation is started with the current value of <code class="docutils literal notranslate"><span class="pre">data</span></code>.</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">data_width=1</span></code>, a classic bit-serial CRC is implemented for the
+given polynomial in a Galois-type shift register. For larger values of
+<code class="docutils literal notranslate"><span class="pre">data_width</span></code>, a similar architecture computes every new bit of the
+CRC in parallel.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">match_detected</span></code> output may be used to validate data with a trailing
+CRC (also known as a codeword). If the most recently processed word(s) form
+the valid CRC of all the previous data since <code class="docutils literal notranslate"><span class="pre">first</span></code> was asserted, the
+CRC register will always take on a fixed value known as the residue.  The
+<code class="docutils literal notranslate"><span class="pre">match_detected</span></code> output indicates whether the CRC register currently
+contains this residue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parameters</strong> (<a class="reference internal" href="#amaranth.lib.crc.Parameters" title="amaranth.lib.crc.Parameters"><em>Parameters</em></a>) – CRC parameters.</p>
+</dd>
+<dt class="field-even">Variables<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>first</strong> (<em>Signal</em><em>(</em><em>)</em><em>, </em><em>in</em>) – Assert to indicate the start of a CRC computation, re-initialising
+the CRC register to the initial value. May be asserted simultaneously
+with <code class="docutils literal notranslate"><span class="pre">valid</span></code>.</p></li>
+<li><p><strong>data</strong> (<em>Signal</em><em>(</em><em>data_width</em><em>)</em><em>, </em><em>in</em>) – Data word to add to CRC when <code class="docutils literal notranslate"><span class="pre">valid</span></code> is asserted.</p></li>
+<li><p><strong>valid</strong> (<em>Signal</em><em>(</em><em>)</em><em>, </em><em>in</em>) – Assert when <code class="docutils literal notranslate"><span class="pre">data</span></code> is valid to add the data word to the CRC.</p></li>
+<li><p><strong>crc</strong> (<em>Signal</em><em>(</em><em>crc_width</em><em>)</em><em>, </em><em>out</em>) – Registered CRC output value, updated one clock cycle after <code class="docutils literal notranslate"><span class="pre">valid</span></code>
+becomes asserted.</p></li>
+<li><p><strong>match_detected</strong> (<em>Signal</em><em>(</em><em>)</em><em>, </em><em>out</em>) – Asserted if the current CRC value indicates a valid codeword has been
+received.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Predefined">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">amaranth.lib.crc.</span></span><span class="sig-name descname"><span class="pre">Predefined</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">crc_width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polynomial</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_crc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reflect_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reflect_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xor_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residue</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#amaranth.lib.crc.Predefined" title="Permalink to this definition"></a></dt>
+<dd><p>Predefined CRC parameters.</p>
+<p>Each instance of this class is a standard or well-known CRC algorithm,
+specified except for the data word width. Refer to the <code class="docutils literal notranslate"><span class="pre">Parameters</span></code>
+class for the meaning of the parameters, and additionally:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">check</span></code> is the CRC of the ASCII byte string “123456789”, commonly
+used to validate a CRC algorithm.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">residue</span></code> is the expected CRC value after processing a valid
+codeword (a data word followed immediately by its CRC).</p></li>
+</ul>
+<p>To create a <code class="docutils literal notranslate"><span class="pre">Parameters</span></code> instance, call the <code class="docutils literal notranslate"><span class="pre">Predefined</span></code> object
+with the required data word width, which defaults to 8 bits.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">amaranth.lib.crc.</span></span><span class="sig-name descname"><span class="pre">Catalog</span></span><a class="headerlink" href="#amaranth.lib.crc.Catalog" title="Permalink to this definition"></a></dt>
+<dd><p>Catalog of predefined CRC algorithms.</p>
+<p>All entries are from <a class="reference external" href="https://reveng.sourceforge.io/crc-catalogue/all.htm">reveng</a>, accessed on 2023-05-25.</p>
+<p>To use an entry, call it with an optional <code class="docutils literal notranslate"><span class="pre">data_width</span></code> which defaults
+to 8. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">crc8</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">submodules</span><span class="o">.</span><span class="n">crc8</span> <span class="o">=</span> <span class="n">crc</span><span class="o">.</span><span class="n">Catalog</span><span class="o">.</span><span class="n">CRC8_AUTOSAR</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC3_GSM">
+<span class="sig-name descname"><span class="pre">CRC3_GSM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=3,</span> <span class="pre">polynomial=0x3,</span> <span class="pre">initial_crc=0x0,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x7,</span> <span class="pre">check=0x4,</span> <span class="pre">residue=0x2)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC3_GSM" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC3_ROHC">
+<span class="sig-name descname"><span class="pre">CRC3_ROHC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=3,</span> <span class="pre">polynomial=0x3,</span> <span class="pre">initial_crc=0x7,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0,</span> <span class="pre">check=0x6,</span> <span class="pre">residue=0x0)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC3_ROHC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC4_G_704">
+<span class="sig-name descname"><span class="pre">CRC4_G_704</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=4,</span> <span class="pre">polynomial=0x3,</span> <span class="pre">initial_crc=0x0,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0,</span> <span class="pre">check=0x7,</span> <span class="pre">residue=0x0)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC4_G_704" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC4_ITU">
+<span class="sig-name descname"><span class="pre">CRC4_ITU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=4,</span> <span class="pre">polynomial=0x3,</span> <span class="pre">initial_crc=0x0,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0,</span> <span class="pre">check=0x7,</span> <span class="pre">residue=0x0)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC4_ITU" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC4_INTERLAKEN">
+<span class="sig-name descname"><span class="pre">CRC4_INTERLAKEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=4,</span> <span class="pre">polynomial=0x3,</span> <span class="pre">initial_crc=0xf,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xf,</span> <span class="pre">check=0xb,</span> <span class="pre">residue=0x2)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC4_INTERLAKEN" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC5_EPC_C1G2">
+<span class="sig-name descname"><span class="pre">CRC5_EPC_C1G2</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=5,</span> <span class="pre">polynomial=0x9,</span> <span class="pre">initial_crc=0x9,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0,</span> <span class="pre">check=0x0,</span> <span class="pre">residue=0x0)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC5_EPC_C1G2" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC5_EPC">
+<span class="sig-name descname"><span class="pre">CRC5_EPC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=5,</span> <span class="pre">polynomial=0x9,</span> <span class="pre">initial_crc=0x9,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0,</span> <span class="pre">check=0x0,</span> <span class="pre">residue=0x0)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC5_EPC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC5_G_704">
+<span class="sig-name descname"><span class="pre">CRC5_G_704</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=5,</span> <span class="pre">polynomial=0x15,</span> <span class="pre">initial_crc=0x0,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0,</span> <span class="pre">check=0x7,</span> <span class="pre">residue=0x0)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC5_G_704" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC5_ITU">
+<span class="sig-name descname"><span class="pre">CRC5_ITU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=5,</span> <span class="pre">polynomial=0x15,</span> <span class="pre">initial_crc=0x0,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0,</span> <span class="pre">check=0x7,</span> <span class="pre">residue=0x0)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC5_ITU" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC5_USB">
+<span class="sig-name descname"><span class="pre">CRC5_USB</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=5,</span> <span class="pre">polynomial=0x5,</span> <span class="pre">initial_crc=0x1f,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x1f,</span> <span class="pre">check=0x19,</span> <span class="pre">residue=0x6)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC5_USB" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC6_CDMA2000_A">
+<span class="sig-name descname"><span class="pre">CRC6_CDMA2000_A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=6,</span> <span class="pre">polynomial=0x27,</span> <span class="pre">initial_crc=0x3f,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0,</span> <span class="pre">check=0xd,</span> <span class="pre">residue=0x0)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC6_CDMA2000_A" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC6_CDMA2000_B">
+<span class="sig-name descname"><span class="pre">CRC6_CDMA2000_B</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=6,</span> <span class="pre">polynomial=0x7,</span> <span class="pre">initial_crc=0x3f,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0,</span> <span class="pre">check=0x3b,</span> <span class="pre">residue=0x0)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC6_CDMA2000_B" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC6_DARC">
+<span class="sig-name descname"><span class="pre">CRC6_DARC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=6,</span> <span class="pre">polynomial=0x19,</span> <span class="pre">initial_crc=0x0,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0,</span> <span class="pre">check=0x26,</span> <span class="pre">residue=0x0)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC6_DARC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC6_G_704">
+<span class="sig-name descname"><span class="pre">CRC6_G_704</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=6,</span> <span class="pre">polynomial=0x3,</span> <span class="pre">initial_crc=0x0,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0,</span> <span class="pre">check=0x6,</span> <span class="pre">residue=0x0)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC6_G_704" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC6_ITU">
+<span class="sig-name descname"><span class="pre">CRC6_ITU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=6,</span> <span class="pre">polynomial=0x3,</span> <span class="pre">initial_crc=0x0,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0,</span> <span class="pre">check=0x6,</span> <span class="pre">residue=0x0)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC6_ITU" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC6_GSM">
+<span class="sig-name descname"><span class="pre">CRC6_GSM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=6,</span> <span class="pre">polynomial=0x2f,</span> <span class="pre">initial_crc=0x0,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x3f,</span> <span class="pre">check=0x13,</span> <span class="pre">residue=0x3a)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC6_GSM" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC7_MMC">
+<span class="sig-name descname"><span class="pre">CRC7_MMC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=7,</span> <span class="pre">polynomial=0x9,</span> <span class="pre">initial_crc=0x0,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0,</span> <span class="pre">check=0x75,</span> <span class="pre">residue=0x0)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC7_MMC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC7_ROHC">
+<span class="sig-name descname"><span class="pre">CRC7_ROHC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=7,</span> <span class="pre">polynomial=0x4f,</span> <span class="pre">initial_crc=0x7f,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0,</span> <span class="pre">check=0x53,</span> <span class="pre">residue=0x0)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC7_ROHC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC7_UMTS">
+<span class="sig-name descname"><span class="pre">CRC7_UMTS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=7,</span> <span class="pre">polynomial=0x45,</span> <span class="pre">initial_crc=0x0,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0,</span> <span class="pre">check=0x61,</span> <span class="pre">residue=0x0)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC7_UMTS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_AUTOSAR">
+<span class="sig-name descname"><span class="pre">CRC8_AUTOSAR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x2f,</span> <span class="pre">initial_crc=0xff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xff,</span> <span class="pre">check=0xdf,</span> <span class="pre">residue=0x42)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_AUTOSAR" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_BLUETOOTH">
+<span class="sig-name descname"><span class="pre">CRC8_BLUETOOTH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0xa7,</span> <span class="pre">initial_crc=0x00,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0x26,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_BLUETOOTH" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_CDMA2000">
+<span class="sig-name descname"><span class="pre">CRC8_CDMA2000</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x9b,</span> <span class="pre">initial_crc=0xff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0xda,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_CDMA2000" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_DARC">
+<span class="sig-name descname"><span class="pre">CRC8_DARC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x39,</span> <span class="pre">initial_crc=0x00,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0x15,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_DARC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_DVB_S2">
+<span class="sig-name descname"><span class="pre">CRC8_DVB_S2</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0xd5,</span> <span class="pre">initial_crc=0x00,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0xbc,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_DVB_S2" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_GSM_A">
+<span class="sig-name descname"><span class="pre">CRC8_GSM_A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x1d,</span> <span class="pre">initial_crc=0x00,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0x37,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_GSM_A" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_GSM_B">
+<span class="sig-name descname"><span class="pre">CRC8_GSM_B</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x49,</span> <span class="pre">initial_crc=0x00,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xff,</span> <span class="pre">check=0x94,</span> <span class="pre">residue=0x53)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_GSM_B" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_HITAG">
+<span class="sig-name descname"><span class="pre">CRC8_HITAG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x1d,</span> <span class="pre">initial_crc=0xff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0xb4,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_HITAG" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_I_432_1">
+<span class="sig-name descname"><span class="pre">CRC8_I_432_1</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x07,</span> <span class="pre">initial_crc=0x00,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x55,</span> <span class="pre">check=0xa1,</span> <span class="pre">residue=0xac)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_I_432_1" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_ITU">
+<span class="sig-name descname"><span class="pre">CRC8_ITU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x07,</span> <span class="pre">initial_crc=0x00,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x55,</span> <span class="pre">check=0xa1,</span> <span class="pre">residue=0xac)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_ITU" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_I_CODE">
+<span class="sig-name descname"><span class="pre">CRC8_I_CODE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x1d,</span> <span class="pre">initial_crc=0xfd,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0x7e,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_I_CODE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_LTE">
+<span class="sig-name descname"><span class="pre">CRC8_LTE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x9b,</span> <span class="pre">initial_crc=0x00,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0xea,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_LTE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_MAXIM_DOW">
+<span class="sig-name descname"><span class="pre">CRC8_MAXIM_DOW</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x31,</span> <span class="pre">initial_crc=0x00,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0xa1,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_MAXIM_DOW" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_MAXIM">
+<span class="sig-name descname"><span class="pre">CRC8_MAXIM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x31,</span> <span class="pre">initial_crc=0x00,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0xa1,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_MAXIM" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_MIFARE_MAD">
+<span class="sig-name descname"><span class="pre">CRC8_MIFARE_MAD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x1d,</span> <span class="pre">initial_crc=0xc7,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0x99,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_MIFARE_MAD" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_NRSC_5">
+<span class="sig-name descname"><span class="pre">CRC8_NRSC_5</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x31,</span> <span class="pre">initial_crc=0xff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0xf7,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_NRSC_5" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_OPENSAFETY">
+<span class="sig-name descname"><span class="pre">CRC8_OPENSAFETY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x2f,</span> <span class="pre">initial_crc=0x00,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0x3e,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_OPENSAFETY" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_ROHC">
+<span class="sig-name descname"><span class="pre">CRC8_ROHC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x07,</span> <span class="pre">initial_crc=0xff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0xd0,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_ROHC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_SAE_J1850">
+<span class="sig-name descname"><span class="pre">CRC8_SAE_J1850</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x1d,</span> <span class="pre">initial_crc=0xff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xff,</span> <span class="pre">check=0x4b,</span> <span class="pre">residue=0xc4)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_SAE_J1850" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_SMBUS">
+<span class="sig-name descname"><span class="pre">CRC8_SMBUS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x07,</span> <span class="pre">initial_crc=0x00,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0xf4,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_SMBUS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_TECH_3250">
+<span class="sig-name descname"><span class="pre">CRC8_TECH_3250</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x1d,</span> <span class="pre">initial_crc=0xff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0x97,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_TECH_3250" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_AES">
+<span class="sig-name descname"><span class="pre">CRC8_AES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x1d,</span> <span class="pre">initial_crc=0xff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0x97,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_AES" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_ETU">
+<span class="sig-name descname"><span class="pre">CRC8_ETU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x1d,</span> <span class="pre">initial_crc=0xff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0x97,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_ETU" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_WCDMA">
+<span class="sig-name descname"><span class="pre">CRC8_WCDMA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=8,</span> <span class="pre">polynomial=0x9b,</span> <span class="pre">initial_crc=0x00,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0x25,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_WCDMA" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC10_ATM">
+<span class="sig-name descname"><span class="pre">CRC10_ATM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=10,</span> <span class="pre">polynomial=0x233,</span> <span class="pre">initial_crc=0x00,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0x199,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC10_ATM" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC8_I_610">
+<span class="sig-name descname"><span class="pre">CRC8_I_610</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=10,</span> <span class="pre">polynomial=0x233,</span> <span class="pre">initial_crc=0x00,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0x199,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC8_I_610" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC10_CDMA2000">
+<span class="sig-name descname"><span class="pre">CRC10_CDMA2000</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=10,</span> <span class="pre">polynomial=0x3d9,</span> <span class="pre">initial_crc=0x3ff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0x233,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC10_CDMA2000" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC10_GSM">
+<span class="sig-name descname"><span class="pre">CRC10_GSM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=10,</span> <span class="pre">polynomial=0x175,</span> <span class="pre">initial_crc=0x00,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x3ff,</span> <span class="pre">check=0x12a,</span> <span class="pre">residue=0xc6)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC10_GSM" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC11_FLEXRAY">
+<span class="sig-name descname"><span class="pre">CRC11_FLEXRAY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=11,</span> <span class="pre">polynomial=0x385,</span> <span class="pre">initial_crc=0x1a,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0x5a3,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC11_FLEXRAY" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC11_UMTS">
+<span class="sig-name descname"><span class="pre">CRC11_UMTS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=11,</span> <span class="pre">polynomial=0x307,</span> <span class="pre">initial_crc=0x00,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x00,</span> <span class="pre">check=0x61,</span> <span class="pre">residue=0x00)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC11_UMTS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC12_CDMA2000">
+<span class="sig-name descname"><span class="pre">CRC12_CDMA2000</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=12,</span> <span class="pre">polynomial=0xf13,</span> <span class="pre">initial_crc=0xfff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x000,</span> <span class="pre">check=0xd4d,</span> <span class="pre">residue=0x000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC12_CDMA2000" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC12_DECT">
+<span class="sig-name descname"><span class="pre">CRC12_DECT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=12,</span> <span class="pre">polynomial=0x80f,</span> <span class="pre">initial_crc=0x000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x000,</span> <span class="pre">check=0xf5b,</span> <span class="pre">residue=0x000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC12_DECT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC12_GSM">
+<span class="sig-name descname"><span class="pre">CRC12_GSM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=12,</span> <span class="pre">polynomial=0xd31,</span> <span class="pre">initial_crc=0x000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xfff,</span> <span class="pre">check=0xb34,</span> <span class="pre">residue=0x178)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC12_GSM" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC12_UMTS">
+<span class="sig-name descname"><span class="pre">CRC12_UMTS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=12,</span> <span class="pre">polynomial=0x80f,</span> <span class="pre">initial_crc=0x000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x000,</span> <span class="pre">check=0xdaf,</span> <span class="pre">residue=0x000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC12_UMTS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC12_3GPP">
+<span class="sig-name descname"><span class="pre">CRC12_3GPP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=12,</span> <span class="pre">polynomial=0x80f,</span> <span class="pre">initial_crc=0x000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x000,</span> <span class="pre">check=0xdaf,</span> <span class="pre">residue=0x000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC12_3GPP" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC13_BBC">
+<span class="sig-name descname"><span class="pre">CRC13_BBC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=13,</span> <span class="pre">polynomial=0x1cf5,</span> <span class="pre">initial_crc=0x000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x000,</span> <span class="pre">check=0x4fa,</span> <span class="pre">residue=0x000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC13_BBC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC14_DARC">
+<span class="sig-name descname"><span class="pre">CRC14_DARC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=14,</span> <span class="pre">polynomial=0x805,</span> <span class="pre">initial_crc=0x000,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x000,</span> <span class="pre">check=0x82d,</span> <span class="pre">residue=0x000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC14_DARC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC14_GSM">
+<span class="sig-name descname"><span class="pre">CRC14_GSM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=14,</span> <span class="pre">polynomial=0x202d,</span> <span class="pre">initial_crc=0x000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x3fff,</span> <span class="pre">check=0x30ae,</span> <span class="pre">residue=0x31e)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC14_GSM" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC15_CAN">
+<span class="sig-name descname"><span class="pre">CRC15_CAN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=15,</span> <span class="pre">polynomial=0x4599,</span> <span class="pre">initial_crc=0x000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x000,</span> <span class="pre">check=0x59e,</span> <span class="pre">residue=0x000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC15_CAN" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC15_MPT1327">
+<span class="sig-name descname"><span class="pre">CRC15_MPT1327</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=15,</span> <span class="pre">polynomial=0x6815,</span> <span class="pre">initial_crc=0x000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x001,</span> <span class="pre">check=0x2566,</span> <span class="pre">residue=0x6815)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC15_MPT1327" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_ARC">
+<span class="sig-name descname"><span class="pre">CRC16_ARC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x8005,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0xbb3d,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_ARC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_IBM">
+<span class="sig-name descname"><span class="pre">CRC16_IBM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x8005,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0xbb3d,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_IBM" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_CDMA2000">
+<span class="sig-name descname"><span class="pre">CRC16_CDMA2000</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0xc867,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x4c06,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_CDMA2000" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_CMS">
+<span class="sig-name descname"><span class="pre">CRC16_CMS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x8005,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0xaee7,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_CMS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_DDS_110">
+<span class="sig-name descname"><span class="pre">CRC16_DDS_110</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x8005,</span> <span class="pre">initial_crc=0x800d,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x9ecf,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_DDS_110" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_DECT_R">
+<span class="sig-name descname"><span class="pre">CRC16_DECT_R</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x0589,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0001,</span> <span class="pre">check=0x007e,</span> <span class="pre">residue=0x0589)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_DECT_R" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_DECT_X">
+<span class="sig-name descname"><span class="pre">CRC16_DECT_X</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x0589,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x007f,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_DECT_X" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_DNP">
+<span class="sig-name descname"><span class="pre">CRC16_DNP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x3d65,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffff,</span> <span class="pre">check=0xea82,</span> <span class="pre">residue=0x66c5)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_DNP" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_EN_13757">
+<span class="sig-name descname"><span class="pre">CRC16_EN_13757</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x3d65,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xffff,</span> <span class="pre">check=0xc2b7,</span> <span class="pre">residue=0xa366)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_EN_13757" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_GENIBUS">
+<span class="sig-name descname"><span class="pre">CRC16_GENIBUS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xffff,</span> <span class="pre">check=0xd64e,</span> <span class="pre">residue=0x1d0f)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_GENIBUS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_DARC">
+<span class="sig-name descname"><span class="pre">CRC16_DARC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xffff,</span> <span class="pre">check=0xd64e,</span> <span class="pre">residue=0x1d0f)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_DARC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_EPC">
+<span class="sig-name descname"><span class="pre">CRC16_EPC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xffff,</span> <span class="pre">check=0xd64e,</span> <span class="pre">residue=0x1d0f)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_EPC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_EPC_C1G2">
+<span class="sig-name descname"><span class="pre">CRC16_EPC_C1G2</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xffff,</span> <span class="pre">check=0xd64e,</span> <span class="pre">residue=0x1d0f)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_EPC_C1G2" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_I_CODE">
+<span class="sig-name descname"><span class="pre">CRC16_I_CODE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xffff,</span> <span class="pre">check=0xd64e,</span> <span class="pre">residue=0x1d0f)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_I_CODE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_GSM">
+<span class="sig-name descname"><span class="pre">CRC16_GSM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xffff,</span> <span class="pre">check=0xce3c,</span> <span class="pre">residue=0x1d0f)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_GSM" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_IBM_3740">
+<span class="sig-name descname"><span class="pre">CRC16_IBM_3740</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x29b1,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_IBM_3740" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_AUTOSAR">
+<span class="sig-name descname"><span class="pre">CRC16_AUTOSAR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x29b1,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_AUTOSAR" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_CCITT_FALSE">
+<span class="sig-name descname"><span class="pre">CRC16_CCITT_FALSE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x29b1,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_CCITT_FALSE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_IBM_SDLC">
+<span class="sig-name descname"><span class="pre">CRC16_IBM_SDLC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffff,</span> <span class="pre">check=0x906e,</span> <span class="pre">residue=0xf0b8)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_IBM_SDLC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_ISO_HDLC">
+<span class="sig-name descname"><span class="pre">CRC16_ISO_HDLC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffff,</span> <span class="pre">check=0x906e,</span> <span class="pre">residue=0xf0b8)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_ISO_HDLC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_ISO_IEC_14443_3_B">
+<span class="sig-name descname"><span class="pre">CRC16_ISO_IEC_14443_3_B</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffff,</span> <span class="pre">check=0x906e,</span> <span class="pre">residue=0xf0b8)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_ISO_IEC_14443_3_B" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_X25">
+<span class="sig-name descname"><span class="pre">CRC16_X25</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffff,</span> <span class="pre">check=0x906e,</span> <span class="pre">residue=0xf0b8)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_X25" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_ISO_IEC_14443_3_A">
+<span class="sig-name descname"><span class="pre">CRC16_ISO_IEC_14443_3_A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0xc6c6,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0xbf05,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_ISO_IEC_14443_3_A" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_KERMIT">
+<span class="sig-name descname"><span class="pre">CRC16_KERMIT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x2189,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_KERMIT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_BLUETOOTH">
+<span class="sig-name descname"><span class="pre">CRC16_BLUETOOTH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x2189,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_BLUETOOTH" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_CCITT">
+<span class="sig-name descname"><span class="pre">CRC16_CCITT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x2189,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_CCITT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_CCITT_TRUE">
+<span class="sig-name descname"><span class="pre">CRC16_CCITT_TRUE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x2189,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_CCITT_TRUE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_V_41_LSB">
+<span class="sig-name descname"><span class="pre">CRC16_V_41_LSB</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x2189,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_V_41_LSB" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_LJ1200">
+<span class="sig-name descname"><span class="pre">CRC16_LJ1200</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x6f63,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0xbdf4,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_LJ1200" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_M17">
+<span class="sig-name descname"><span class="pre">CRC16_M17</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x5935,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x772b,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_M17" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_MAXIM_DOW">
+<span class="sig-name descname"><span class="pre">CRC16_MAXIM_DOW</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x8005,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffff,</span> <span class="pre">check=0x44c2,</span> <span class="pre">residue=0xb001)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_MAXIM_DOW" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_MAXIM">
+<span class="sig-name descname"><span class="pre">CRC16_MAXIM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x8005,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffff,</span> <span class="pre">check=0x44c2,</span> <span class="pre">residue=0xb001)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_MAXIM" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_MCRF4XX">
+<span class="sig-name descname"><span class="pre">CRC16_MCRF4XX</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x6f91,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_MCRF4XX" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_MODBUS">
+<span class="sig-name descname"><span class="pre">CRC16_MODBUS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x8005,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x4b37,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_MODBUS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_NRSC_5">
+<span class="sig-name descname"><span class="pre">CRC16_NRSC_5</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x080b,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0xa066,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_NRSC_5" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_OPENSAFETY_A">
+<span class="sig-name descname"><span class="pre">CRC16_OPENSAFETY_A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x5935,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x5d38,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_OPENSAFETY_A" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_OPENSAFETY_B">
+<span class="sig-name descname"><span class="pre">CRC16_OPENSAFETY_B</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x755b,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x20fe,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_OPENSAFETY_B" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_PROFIBUS">
+<span class="sig-name descname"><span class="pre">CRC16_PROFIBUS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1dcf,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xffff,</span> <span class="pre">check=0xa819,</span> <span class="pre">residue=0xe394)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_PROFIBUS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_IEC_61158_2">
+<span class="sig-name descname"><span class="pre">CRC16_IEC_61158_2</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1dcf,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xffff,</span> <span class="pre">check=0xa819,</span> <span class="pre">residue=0xe394)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_IEC_61158_2" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_RIELLO">
+<span class="sig-name descname"><span class="pre">CRC16_RIELLO</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0xb2aa,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x63d0,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_RIELLO" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_SPI_FUJITSU">
+<span class="sig-name descname"><span class="pre">CRC16_SPI_FUJITSU</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0x1d0f,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0xe5cc,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_SPI_FUJITSU" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_AUG_CCITT">
+<span class="sig-name descname"><span class="pre">CRC16_AUG_CCITT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0x1d0f,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0xe5cc,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_AUG_CCITT" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_T10_DIF">
+<span class="sig-name descname"><span class="pre">CRC16_T10_DIF</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x8bb7,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0xd0db,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_T10_DIF" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_TELEDISK">
+<span class="sig-name descname"><span class="pre">CRC16_TELEDISK</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0xa097,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x0fb3,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_TELEDISK" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_TMS37157">
+<span class="sig-name descname"><span class="pre">CRC16_TMS37157</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0x89ec,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x26b1,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_TMS37157" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_UMTS">
+<span class="sig-name descname"><span class="pre">CRC16_UMTS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x8005,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0xfee8,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_UMTS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_BUYPASS">
+<span class="sig-name descname"><span class="pre">CRC16_BUYPASS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x8005,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0xfee8,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_BUYPASS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_VERIFONE">
+<span class="sig-name descname"><span class="pre">CRC16_VERIFONE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x8005,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0xfee8,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_VERIFONE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_USB">
+<span class="sig-name descname"><span class="pre">CRC16_USB</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x8005,</span> <span class="pre">initial_crc=0xffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffff,</span> <span class="pre">check=0xb4c8,</span> <span class="pre">residue=0xb001)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_USB" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_XMODEM">
+<span class="sig-name descname"><span class="pre">CRC16_XMODEM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x31c3,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_XMODEM" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_ACORN">
+<span class="sig-name descname"><span class="pre">CRC16_ACORN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x31c3,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_ACORN" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_LTE">
+<span class="sig-name descname"><span class="pre">CRC16_LTE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x31c3,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_LTE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_V_41_MSB">
+<span class="sig-name descname"><span class="pre">CRC16_V_41_MSB</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x31c3,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_V_41_MSB" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC16_ZMODEM">
+<span class="sig-name descname"><span class="pre">CRC16_ZMODEM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=16,</span> <span class="pre">polynomial=0x1021,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x31c3,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC16_ZMODEM" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC17_CAN_FD">
+<span class="sig-name descname"><span class="pre">CRC17_CAN_FD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=17,</span> <span class="pre">polynomial=0x1685b,</span> <span class="pre">initial_crc=0x0000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000,</span> <span class="pre">check=0x4f03,</span> <span class="pre">residue=0x0000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC17_CAN_FD" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC21_CAN_FD">
+<span class="sig-name descname"><span class="pre">CRC21_CAN_FD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=21,</span> <span class="pre">polynomial=0x102899,</span> <span class="pre">initial_crc=0x00000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x00000,</span> <span class="pre">check=0xed841,</span> <span class="pre">residue=0x00000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC21_CAN_FD" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC24_BLE">
+<span class="sig-name descname"><span class="pre">CRC24_BLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=24,</span> <span class="pre">polynomial=0x00065b,</span> <span class="pre">initial_crc=0x555555,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x000000,</span> <span class="pre">check=0xc25a56,</span> <span class="pre">residue=0x000000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC24_BLE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC24_FLEXRAY_A">
+<span class="sig-name descname"><span class="pre">CRC24_FLEXRAY_A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=24,</span> <span class="pre">polynomial=0x5d6dcb,</span> <span class="pre">initial_crc=0xfedcba,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x000000,</span> <span class="pre">check=0x7979bd,</span> <span class="pre">residue=0x000000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC24_FLEXRAY_A" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC24_FLEXRAY_B">
+<span class="sig-name descname"><span class="pre">CRC24_FLEXRAY_B</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=24,</span> <span class="pre">polynomial=0x5d6dcb,</span> <span class="pre">initial_crc=0xabcdef,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x000000,</span> <span class="pre">check=0x1f23b8,</span> <span class="pre">residue=0x000000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC24_FLEXRAY_B" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC24_INTERLAKEN">
+<span class="sig-name descname"><span class="pre">CRC24_INTERLAKEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=24,</span> <span class="pre">polynomial=0x328b63,</span> <span class="pre">initial_crc=0xffffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xffffff,</span> <span class="pre">check=0xb4f3e6,</span> <span class="pre">residue=0x144e63)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC24_INTERLAKEN" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC24_LTE_A">
+<span class="sig-name descname"><span class="pre">CRC24_LTE_A</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=24,</span> <span class="pre">polynomial=0x864cfb,</span> <span class="pre">initial_crc=0x000000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x000000,</span> <span class="pre">check=0xcde703,</span> <span class="pre">residue=0x000000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC24_LTE_A" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC24_LTE_B">
+<span class="sig-name descname"><span class="pre">CRC24_LTE_B</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=24,</span> <span class="pre">polynomial=0x800063,</span> <span class="pre">initial_crc=0x000000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x000000,</span> <span class="pre">check=0x23ef52,</span> <span class="pre">residue=0x000000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC24_LTE_B" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC24_OPENPGP">
+<span class="sig-name descname"><span class="pre">CRC24_OPENPGP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=24,</span> <span class="pre">polynomial=0x864cfb,</span> <span class="pre">initial_crc=0xb704ce,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x000000,</span> <span class="pre">check=0x21cf02,</span> <span class="pre">residue=0x000000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC24_OPENPGP" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC24_OS_9">
+<span class="sig-name descname"><span class="pre">CRC24_OS_9</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=24,</span> <span class="pre">polynomial=0x800063,</span> <span class="pre">initial_crc=0xffffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xffffff,</span> <span class="pre">check=0x200fa5,</span> <span class="pre">residue=0x800fe3)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC24_OS_9" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC30_CDMA">
+<span class="sig-name descname"><span class="pre">CRC30_CDMA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=30,</span> <span class="pre">polynomial=0x2030b9c7,</span> <span class="pre">initial_crc=0x3fffffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x3fffffff,</span> <span class="pre">check=0x4c34abf,</span> <span class="pre">residue=0x34efa55a)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC30_CDMA" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC31_PHILIPS">
+<span class="sig-name descname"><span class="pre">CRC31_PHILIPS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=31,</span> <span class="pre">polynomial=0x4c11db7,</span> <span class="pre">initial_crc=0x7fffffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x7fffffff,</span> <span class="pre">check=0xce9e46c,</span> <span class="pre">residue=0x4eaf26f1)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC31_PHILIPS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_AIXM">
+<span class="sig-name descname"><span class="pre">CRC32_AIXM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x814141ab,</span> <span class="pre">initial_crc=0x00000000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x00000000,</span> <span class="pre">check=0x3010bf7f,</span> <span class="pre">residue=0x00000000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_AIXM" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_AUTOSAR">
+<span class="sig-name descname"><span class="pre">CRC32_AUTOSAR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0xf4acfb13,</span> <span class="pre">initial_crc=0xffffffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffffffff,</span> <span class="pre">check=0x1697d06a,</span> <span class="pre">residue=0x904cddbf)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_AUTOSAR" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_BASE91_D">
+<span class="sig-name descname"><span class="pre">CRC32_BASE91_D</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0xa833982b,</span> <span class="pre">initial_crc=0xffffffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffffffff,</span> <span class="pre">check=0x87315576,</span> <span class="pre">residue=0x45270551)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_BASE91_D" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_BZIP2">
+<span class="sig-name descname"><span class="pre">CRC32_BZIP2</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x04c11db7,</span> <span class="pre">initial_crc=0xffffffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xffffffff,</span> <span class="pre">check=0xfc891918,</span> <span class="pre">residue=0xc704dd7b)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_BZIP2" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_AAL5">
+<span class="sig-name descname"><span class="pre">CRC32_AAL5</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x04c11db7,</span> <span class="pre">initial_crc=0xffffffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xffffffff,</span> <span class="pre">check=0xfc891918,</span> <span class="pre">residue=0xc704dd7b)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_AAL5" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_DECT_B">
+<span class="sig-name descname"><span class="pre">CRC32_DECT_B</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x04c11db7,</span> <span class="pre">initial_crc=0xffffffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xffffffff,</span> <span class="pre">check=0xfc891918,</span> <span class="pre">residue=0xc704dd7b)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_DECT_B" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_CD_ROM_EDC">
+<span class="sig-name descname"><span class="pre">CRC32_CD_ROM_EDC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x8001801b,</span> <span class="pre">initial_crc=0x00000000,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x00000000,</span> <span class="pre">check=0x6ec2edc4,</span> <span class="pre">residue=0x00000000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_CD_ROM_EDC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_CKSUM">
+<span class="sig-name descname"><span class="pre">CRC32_CKSUM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x04c11db7,</span> <span class="pre">initial_crc=0x00000000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xffffffff,</span> <span class="pre">check=0x765e7680,</span> <span class="pre">residue=0xc704dd7b)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_CKSUM" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_POSIX">
+<span class="sig-name descname"><span class="pre">CRC32_POSIX</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x04c11db7,</span> <span class="pre">initial_crc=0x00000000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xffffffff,</span> <span class="pre">check=0x765e7680,</span> <span class="pre">residue=0xc704dd7b)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_POSIX" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_ISCSI">
+<span class="sig-name descname"><span class="pre">CRC32_ISCSI</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x1edc6f41,</span> <span class="pre">initial_crc=0xffffffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffffffff,</span> <span class="pre">check=0xe3069283,</span> <span class="pre">residue=0xb798b438)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_ISCSI" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_BASE91_C">
+<span class="sig-name descname"><span class="pre">CRC32_BASE91_C</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x1edc6f41,</span> <span class="pre">initial_crc=0xffffffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffffffff,</span> <span class="pre">check=0xe3069283,</span> <span class="pre">residue=0xb798b438)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_BASE91_C" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_CASTAGNOLI">
+<span class="sig-name descname"><span class="pre">CRC32_CASTAGNOLI</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x1edc6f41,</span> <span class="pre">initial_crc=0xffffffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffffffff,</span> <span class="pre">check=0xe3069283,</span> <span class="pre">residue=0xb798b438)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_CASTAGNOLI" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_INTERLAKEN">
+<span class="sig-name descname"><span class="pre">CRC32_INTERLAKEN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x1edc6f41,</span> <span class="pre">initial_crc=0xffffffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffffffff,</span> <span class="pre">check=0xe3069283,</span> <span class="pre">residue=0xb798b438)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_INTERLAKEN" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_ISO_HDLC">
+<span class="sig-name descname"><span class="pre">CRC32_ISO_HDLC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x04c11db7,</span> <span class="pre">initial_crc=0xffffffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffffffff,</span> <span class="pre">check=0xcbf43926,</span> <span class="pre">residue=0xdebb20e3)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_ISO_HDLC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_ADCCP">
+<span class="sig-name descname"><span class="pre">CRC32_ADCCP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x04c11db7,</span> <span class="pre">initial_crc=0xffffffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffffffff,</span> <span class="pre">check=0xcbf43926,</span> <span class="pre">residue=0xdebb20e3)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_ADCCP" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_V_42">
+<span class="sig-name descname"><span class="pre">CRC32_V_42</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x04c11db7,</span> <span class="pre">initial_crc=0xffffffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffffffff,</span> <span class="pre">check=0xcbf43926,</span> <span class="pre">residue=0xdebb20e3)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_V_42" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_XZ">
+<span class="sig-name descname"><span class="pre">CRC32_XZ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x04c11db7,</span> <span class="pre">initial_crc=0xffffffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffffffff,</span> <span class="pre">check=0xcbf43926,</span> <span class="pre">residue=0xdebb20e3)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_XZ" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_PKZIP">
+<span class="sig-name descname"><span class="pre">CRC32_PKZIP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x04c11db7,</span> <span class="pre">initial_crc=0xffffffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffffffff,</span> <span class="pre">check=0xcbf43926,</span> <span class="pre">residue=0xdebb20e3)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_PKZIP" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_ETHERNET">
+<span class="sig-name descname"><span class="pre">CRC32_ETHERNET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x04c11db7,</span> <span class="pre">initial_crc=0xffffffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffffffff,</span> <span class="pre">check=0xcbf43926,</span> <span class="pre">residue=0xdebb20e3)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_ETHERNET" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_JAMCRC">
+<span class="sig-name descname"><span class="pre">CRC32_JAMCRC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x04c11db7,</span> <span class="pre">initial_crc=0xffffffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x00000000,</span> <span class="pre">check=0x340bc6d9,</span> <span class="pre">residue=0x00000000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_JAMCRC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_MEF">
+<span class="sig-name descname"><span class="pre">CRC32_MEF</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x741b8cd7,</span> <span class="pre">initial_crc=0xffffffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x00000000,</span> <span class="pre">check=0xd2c22f51,</span> <span class="pre">residue=0x00000000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_MEF" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_MPEG_2">
+<span class="sig-name descname"><span class="pre">CRC32_MPEG_2</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x04c11db7,</span> <span class="pre">initial_crc=0xffffffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x00000000,</span> <span class="pre">check=0x0376e6e7,</span> <span class="pre">residue=0x00000000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_MPEG_2" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC32_XFER">
+<span class="sig-name descname"><span class="pre">CRC32_XFER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=32,</span> <span class="pre">polynomial=0x000000af,</span> <span class="pre">initial_crc=0x00000000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x00000000,</span> <span class="pre">check=0xbd0be338,</span> <span class="pre">residue=0x00000000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC32_XFER" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC40_GSM">
+<span class="sig-name descname"><span class="pre">CRC40_GSM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=40,</span> <span class="pre">polynomial=0x0004820009,</span> <span class="pre">initial_crc=0x0000000000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xffffffffff,</span> <span class="pre">check=0xd4164fc646,</span> <span class="pre">residue=0xc4ff8071ff)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC40_GSM" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC64_ECMA_182">
+<span class="sig-name descname"><span class="pre">CRC64_ECMA_182</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=64,</span> <span class="pre">polynomial=0x42f0e1eba9ea3693,</span> <span class="pre">initial_crc=0x0000000000000000,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0x0000000000000000,</span> <span class="pre">check=0x6c40df5f0b497347,</span> <span class="pre">residue=0x0000000000000000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC64_ECMA_182" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC64_GO_ISO">
+<span class="sig-name descname"><span class="pre">CRC64_GO_ISO</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=64,</span> <span class="pre">polynomial=0x000000000000001b,</span> <span class="pre">initial_crc=0xffffffffffffffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffffffffffffffff,</span> <span class="pre">check=0xb90956c775a41001,</span> <span class="pre">residue=0x5300000000000000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC64_GO_ISO" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC64_MS">
+<span class="sig-name descname"><span class="pre">CRC64_MS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=64,</span> <span class="pre">polynomial=0x259c84cba6426349,</span> <span class="pre">initial_crc=0xffffffffffffffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0000000000000000,</span> <span class="pre">check=0x75d4b74f024eceea,</span> <span class="pre">residue=0x0000000000000000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC64_MS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC64_REDIS">
+<span class="sig-name descname"><span class="pre">CRC64_REDIS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=64,</span> <span class="pre">polynomial=0xad93d23594c935a9,</span> <span class="pre">initial_crc=0x0000000000000000,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x0000000000000000,</span> <span class="pre">check=0xe9c6d914c4b8d9ca,</span> <span class="pre">residue=0x0000000000000000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC64_REDIS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC64_WE">
+<span class="sig-name descname"><span class="pre">CRC64_WE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=64,</span> <span class="pre">polynomial=0x42f0e1eba9ea3693,</span> <span class="pre">initial_crc=0xffffffffffffffff,</span> <span class="pre">reflect_input=False,</span> <span class="pre">reflect_output=False,</span> <span class="pre">xor_output=0xffffffffffffffff,</span> <span class="pre">check=0x62ec59e3f1a4f00a,</span> <span class="pre">residue=0xfcacbebd5931a992)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC64_WE" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC64_XZ">
+<span class="sig-name descname"><span class="pre">CRC64_XZ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=64,</span> <span class="pre">polynomial=0x42f0e1eba9ea3693,</span> <span class="pre">initial_crc=0xffffffffffffffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffffffffffffffff,</span> <span class="pre">check=0x995dc9bbdf1939fa,</span> <span class="pre">residue=0x49958c9abd7d353f)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC64_XZ" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC64_ECMA">
+<span class="sig-name descname"><span class="pre">CRC64_ECMA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=64,</span> <span class="pre">polynomial=0x42f0e1eba9ea3693,</span> <span class="pre">initial_crc=0xffffffffffffffff,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0xffffffffffffffff,</span> <span class="pre">check=0x995dc9bbdf1939fa,</span> <span class="pre">residue=0x49958c9abd7d353f)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC64_ECMA" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="amaranth.lib.crc.Catalog.CRC82_DARC">
+<span class="sig-name descname"><span class="pre">CRC82_DARC</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Predefined(crc_width=82,</span> <span class="pre">polynomial=0x308c0111011401440411,</span> <span class="pre">initial_crc=0x00000000000000000000,</span> <span class="pre">reflect_input=True,</span> <span class="pre">reflect_output=True,</span> <span class="pre">xor_output=0x00000000000000000000,</span> <span class="pre">check=0x9ea83f625023801fd612,</span> <span class="pre">residue=0x00000000000000000000)</span></em><a class="headerlink" href="#amaranth.lib.crc.Catalog.CRC82_DARC" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cdc.html" class="btn btn-neutral float-left" title="Clock domain crossing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="fifo.html" class="btn btn-neutral float-right" title="First-in first-out queues" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020—2023, Amaranth HDL developers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
