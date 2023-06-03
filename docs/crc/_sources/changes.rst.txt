@@ -29,11 +29,13 @@ Implemented RFCs
 .. _RFC 3: https://amaranth-lang.org/rfcs/0003-enumeration-shapes.html
 .. _RFC 4: https://amaranth-lang.org/rfcs/0004-const-castable-exprs.html
 .. _RFC 5: https://amaranth-lang.org/rfcs/0005-remove-const-normalize.html
+.. _RFC 6: https://amaranth-lang.org/rfcs/0006-stdlib-crc.html
 
 * `RFC 1`_: Aggregate data structure library
 * `RFC 3`_: Enumeration shapes
 * `RFC 4`_: Constant-castable expressions
 * `RFC 5`_: Remove Const.normalize
+* `RFC 6`_: CRC generator
 
 
 Language changes
@@ -62,6 +64,7 @@ Standard library changes
 
 * Added: :mod:`amaranth.lib.enum`. (`RFC 3`_)
 * Added: :mod:`amaranth.lib.data`. (`RFC 1`_)
+* Added: :mod:`amaranth.lib.crc`. (`RFC 6`_)
 
 
 Toolchain changes
